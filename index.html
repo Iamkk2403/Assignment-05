@@ -272,6 +272,86 @@
       </div>
     </section>
     
-    
+    <script>
+      // Initial counts
+      let coins = 100;
+      let hearts = 0;
+      let copyCount = 0;
+
+      const coinDisplay = document.getElementById('coinCount');
+      const heartDisplay = document.getElementById('likeCount');
+      const copyDisplay = document.getElementById('copyCount');
+      const historyList = document.getElementById('history-list');
+      const clearHistoryBtn = document.getElementById('clear-history');
+
+      // Heart buttons functionality
+      document.querySelectorAll('.heart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Toggle heart icon
+          const icon = this.querySelector('i');
+          if (icon.classList.contains('fa-regular')) {
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid', 'text-red-500');
+            hearts++;
+          } else {
+            icon.classList.remove('fa-solid', 'text-red-500');
+            icon.classList.add('fa-regular');
+            hearts--;
+          }
+          heartDisplay.textContent = hearts;
+        });
+      });
+
+      // Call buttons functionality
+      document.querySelectorAll('.call-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const serviceName = this.dataset.name;
+          const serviceNumber = this.dataset.number;
+
+          if (coins < 20) {
+            alert('Not enough coins to make a call!');
+            return;
+          }
+
+          coins -= 20;
+          coinDisplay.textContent = coins;
+
+          alert(`Calling ${serviceName} at ${serviceNumber}`);
+
+          // Add to call history
+          const now = new Date();
+          const timeString = now.toLocaleTimeString();
+          const li = document.createElement('li');
+          li.className = 'flex justify-between border-b pb-1';
+          li.innerHTML = `
+            <div>
+              <div class="font-medium">${serviceName}</div>
+              <div class="text-gray-500">${serviceNumber}</div>
+            </div>
+            <div class="text-gray-400 text-xs">${timeString}</div>
+          `;
+          historyList.prepend(li); 
+        });
+      });
+
+      // Copy buttons functionality
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const number = this.dataset.number;
+          navigator.clipboard.writeText(number).then(() => {
+            copyCount++;
+            copyDisplay.textContent = copyCount + ' Copy';
+            alert(`Copied: ${number}`);
+          }).catch(err => {
+            console.error('Failed to copy!', err);
+          });
+        });
+      });
+
+      // Clear history functionality
+      clearHistoryBtn.addEventListener('click', function() {
+        historyList.innerHTML = '';
+      });
+    </script>
   </body>
 </html>
